@@ -1,3 +1,4 @@
+import os
 import ssl
 import browser_cookie3
 import requests
@@ -11,8 +12,12 @@ from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 import sqlite3
+from dotenv import load_dotenv
 
-from set import API_KEY
+load_dotenv()
+
+API_KEY = os.environ.get('API_KEY')
+cj = browser_cookie3.chrome()
 
 templates = Jinja2Templates(directory='templates')
 app = FastAPI()
@@ -22,7 +27,6 @@ cur.execute("""CREATE TABLE IF NOT EXISTS map_markers (
 address VARCHAR(100),
 coords VARCHAR(100) )
 """)
-cj = browser_cookie3.edge()
 
 CIPHERS = """ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:AES256-SHA"""
 
@@ -73,7 +77,11 @@ def get_geocoords(address: str) -> dict:
     res = cur.execute(f"""SELECT coords from map_markers WHERE address='{address}'""").fetchall()
     if not res:
         link = f"https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&format=json&geocode={address}"
-        coords = requests.get(link).json()["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]
+        try:
+            coords = requests.get(link).json()["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"][
+                "Point"]
+        except KeyError:
+            raise 'Вы превысили лимит YMAPS API!'
         x, y = coords["pos"].split()[::-1]
 
         """Save in db"""
@@ -100,7 +108,7 @@ def get_all_products() -> list:
         if not response:
             break
 
-        #  page += 1
+        page += 1
         products.extend(response)
         break
     return products
