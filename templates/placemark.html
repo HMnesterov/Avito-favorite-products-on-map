@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавление метки на карту</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey={{API_KEY}}"
+            type="text/javascript"></script>
+
+    <script>ymaps.ready(init);
+
+
+    function init() {
+        var myMap = new ymaps.Map("map", {
+            center: [55.76, 37.64],
+            zoom: 5
+        }, {
+            searchControlProvider: 'yandex#search'
+        })
+
+        function add_marker(x, y, title, link) {
+            myMap.geoObjects
+
+
+                .add(new ymaps.Placemark([x, y], {
+                    balloonContent: link,
+                    iconCaption: title
+                }, {
+                    preset: 'islands#redDotIconWithCaption'
+                }));
+        }
+
+        function loadJSON(path, success, error) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        success(JSON.parse(xhr.responseText));
+                    } else {
+                        error(xhr);
+                    }
+                }
+            };
+            xhr.open('GET', path, true);
+            xhr.send();
+        }
+
+        loadJSON(window.location.origin + '/get_products/', myData, 'jsonp');
+
+        function myData(Data) {
+
+            for (var i = 0; i < Data.length; i = i + 1) {
+                add_marker(Data[i]["coords"]["x"], Data[i]["coords"]["y"], Data[i]["title"], Data[i]["item_link"])
+                console.log(Data[i])
+
+
+            }
+        }
+    }
+
+
+    </script>
+    <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+</body>
+</html>
