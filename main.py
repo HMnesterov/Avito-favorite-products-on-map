@@ -81,7 +81,8 @@ def get_geocoords(address: str) -> dict:
             coords = requests.get(link).json()["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"][
                 "Point"]
         except KeyError:
-            raise 'Вы превысили лимит YMAPS API!'
+            raise """Ваш API_KEY недействителен! Если вы активировали его сейчас и уверены в том, что не совершили 
+                  никаких ошибок, подождите 15 минут. """
         x, y = coords["pos"].split()[::-1]
 
         """Save in db"""
