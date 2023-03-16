@@ -17,7 +17,30 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_KEY = os.environ.get('API_KEY')
-cj = browser_cookie3.chrome()
+browser = os.environ.get("BROWSER").lower()
+match browser:
+    case 'chrome':
+        cj = browser_cookie3.chrome()
+    case 'chromium':
+        cj = browser_cookie3.chromium()
+    case 'opera':
+        cj = browser_cookie3.opera()
+    case 'opera_gx':
+        cj = browser_cookie3.opera_gx()
+    case 'firefox':
+        cj = browser_cookie3.firefox()
+    case 'safari':
+        cj = browser_cookie3.safari()
+    case 'edge':
+        cj = browser_cookie3.edge()
+    case 'brave':
+        cj = browser_cookie3.brave()
+    case 'vivaldi':
+        cj = browser_cookie3.vivaldi()
+    case _:
+        raise ConnectionError("""Указанный браузер не является доступным:
+Разрешённые браузеры: Chrome, Firefox, Opera, Opera GX, Edge, Chromium, Brave, Vivaldi, and Safari.
+""")
 
 templates = Jinja2Templates(directory='templates')
 app = FastAPI()
@@ -68,7 +91,9 @@ def get_important_data_from_curr_product(product: dict) -> dict:
     """Take information about the product"""
     item_link: str = "https://www.avito.ru" + product["uri"]
     title: str = product["title"]
-    coords: dict = get_geocoords(product["address"])
+
+    address: str = product["uri"].split('/')[1] + ' ' + product["address"]
+    coords: dict = get_geocoords(address)
     return {"coords": coords, "item_link": item_link, "title": title}
 
 
@@ -81,8 +106,8 @@ def get_geocoords(address: str) -> dict:
             coords = requests.get(link).json()["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"][
                 "Point"]
         except KeyError:
-            raise """Ваш API_KEY недействителен! Если вы активировали его сейчас и уверены в том, что не совершили 
-                  никаких ошибок, подождите 15 минут. """
+            raise """Ваш API_KEY недействителен(Если вы активировали его сейчас и уверены в том, что не совершили 
+                  никаких ошибок, подождите 15 минут) или преодолел лимит по кол-ву запросов - https://developer.tech.yandex.ru/services/3 """
         x, y = coords["pos"].split()[::-1]
 
         """Save in db"""
