@@ -101,7 +101,7 @@ session = create_session()
 @app.get('/get_products/')
 def get_all_products() -> list:
     """Take all data from avito favorites"""
-    page = 2
+    page = 1
     products = []
     while True:
         response = get_data_from_current_page(session=session, page=page)
@@ -110,7 +110,6 @@ def get_all_products() -> list:
 
         page += 1
         products.extend(response)
-        break
     return products
 
 
