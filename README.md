@@ -7,6 +7,7 @@
 
 ```
 git clone https://github.com/BenitoSwaggolini/Avito-favorite-products-on-map.git
+cd Avito-favorite-products-on-map
 python -m venv venv
 .\venv\Scripts\activate
 pip install -r requirements.txt
