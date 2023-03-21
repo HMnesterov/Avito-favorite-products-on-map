@@ -22,7 +22,7 @@
 
 
                 .add(new ymaps.Placemark([x, y], {
-                    balloonContent: title + '\n' + link,
+                    balloonContent: title + '\n' + `<a href="${link}">${link}</a>`,
                     iconCaption: title
                 }, {
                     preset: 'islands#redDotIconWithCaption'
