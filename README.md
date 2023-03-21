@@ -9,8 +9,8 @@
 git clone https://github.com/BenitoSwaggolini/Avito-favorite-products-on-map.git
 cd Avito-favorite-products-on-map
 python -m venv venv
-.\venv\Scripts\activate
-pip install -r requirements.txt
+source venv/bin/activate
+pip3 install -r requirements.txt
 ```
 
 Для успешной работы с приложением следует выполнить следующие действия:
