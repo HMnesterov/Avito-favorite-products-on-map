@@ -82,7 +82,7 @@ def get_data_from_current_page(session, page: int) -> list | None:
         favorites = data.json()["items"]
         if not favorites:
             return None
-        return [get_important_data_from_curr_product(product) for product in favorites]
+        return [get_important_data_from_curr_product(product) for product in favorites if product["isActive"]]
     except KeyError:
         return None
 
@@ -91,7 +91,7 @@ def get_important_data_from_curr_product(product: dict) -> dict:
     """Take information about the product"""
     item_link: str = "https://www.avito.ru" + product["uri"]
     title: str = product["title"]
-
+    print(product)
     address: str = product["uri"].split('/')[1] + ' ' + product["address"]
     coords: dict = get_geocoords(address)
     return {"coords": coords, "item_link": item_link, "title": title}
