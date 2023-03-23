@@ -82,7 +82,7 @@ def get_data_from_current_page(session, page: int) -> list | None:
         favorites = data.json()["items"]
         if not favorites:
             return None
-        return [get_important_data_from_curr_product(product) for product in favorites if product["isActive"]]
+        return [get_important_data_from_curr_product(product) for product in favorites]
     except KeyError:
         return None
 
